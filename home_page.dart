@@ -1,7 +1,23 @@
-
-import 'package:api_provider/provider/my_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:pagination/provider.dart';
 import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: ((context) {
+            return Provides();
+          }),
+        ),
+      ],
+      child: const MaterialApp(
+        home: HomePage(),
+      ),
+    ),
+  );
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,22 +43,37 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Consumer<Provides>(
         builder: (context, value, child) {
-          return Center(
-            child: ListView.builder(
-              itemCount: value.customApiProvider.data?.results?.length,
-              itemBuilder: (context, index) => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${value.customApiProvider.data?.totalResults}'),
-                  Text(
-                      '$index  ${value.customApiProvider.data?.results?[index].title}'),
-                Text('${value.customApiProvider.data?.results?[index].overview}'),
-                ],
+          if (value.customApiProvider.statusCode != 200) {
+            return circulerProgress();
+          } else if (value.customApiProvider.data == null) {
+            return circulerProgress();
+          } else if (value.customApiProvider.data!.results!.isEmpty) {
+            return circulerProgress();
+          } else {
+            return Center(
+              child: ListView.builder(
+                itemCount: value.customApiProvider.data?.results?.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Text('${value.customApiProvider.data?.page}'),
+                    title: Text(
+                        '${value.customApiProvider.data?.results?[index].title}'),
+                    subtitle: Text(
+                        '${value.customApiProvider.data?.results?[index].backdeopPath}'),
+                  );
+                },
               ),
-            ),
-          );
+            );
+          }
         },
       ),
     );
   }
+
+  Center circulerProgress() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
 }
+
