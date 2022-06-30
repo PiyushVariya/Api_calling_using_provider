@@ -2,22 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pagination/provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: ((context) {
-            return Provides();
-          }),
-        ),
-      ],
-      child: const MaterialApp(
-        home: HomePage(),
-      ),
-    ),
-  );
-}
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
